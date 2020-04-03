@@ -37,48 +37,52 @@ func myPrint(board: [[Square]], showColumns:Bool = false) {
     print("Total of queens: \(totalQueens)")
 }
 
-let boardSize = 100
-
-var board:[[Square]] = Array(repeating: Array(repeating: Square(queen: false, protectedByQueen: false) , count: boardSize), count: boardSize)
 
 //
 Main()
 
 func Main() {
     
+    let boardSize = 100
+
+    var board:[[Square]] = Array(repeating: Array(repeating: Square(queen: false, protectedByQueen: false) , count: boardSize), count: boardSize)
+    
     for (rowIndex, row) in board.enumerated() {
         for (colIndex, _) in row.enumerated() where board[rowIndex][colIndex].isAvailable {
-            addQueen(row: rowIndex, col: colIndex)
+            addQueen(board: &board, row: rowIndex, col: colIndex)
         }
     }
+    
+    myPrint(board: board, showColumns: false)
+
 }
 
-func addQueen(row:Int, col:Int) {
+func addQueen( board: inout [[Square]], row:Int, col:Int) {
     board[row][col].queen = true
-    protectSquares(row: row, col: col)
+    protectSquares(board: &board, row: row, col: col)
 }
 
-func protectSquares(row:Int, col:Int) {
+func protectSquares(board: inout [[Square]], row:Int, col:Int) {
     
-    protectRows(row: row)
-    protectCols(col: col)
-    protectDiagonals(row: row, col:col)
+    protectRows(board: &board, row: row)
+    protectCols(board: &board, col: col)
+    protectDiagonals(board: &board, row: row, col:col)
     
 }
 
-func protectRows(row:Int) {
+func protectRows(board: inout [[Square]], row:Int) {
     for (index, _) in board[row].enumerated() {
         board[row][index].protectedByQueen = true
     }
 }
 
-func protectCols(col:Int) {
+func protectCols(board: inout [[Square]], col:Int) {
     for row in 0..<board.count {
         board[row][col].protectedByQueen = true
     }
 }
  
-func protectDiagonals(row:Int, col:Int) {
+func protectDiagonals(board: inout [[Square]], row:Int, col:Int) {
     let objective = row + col
     
     for indexRow in 0..<board.count {
@@ -91,7 +95,3 @@ func protectDiagonals(row:Int, col:Int) {
         }
     }
 }
-
-
-myPrint(board: board, showColumns: false)
-
